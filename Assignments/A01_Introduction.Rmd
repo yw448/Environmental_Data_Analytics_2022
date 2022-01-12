@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Yunting Wang"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -22,21 +22,21 @@ The completed exercise is due on <>.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I've learned some basics from the Environmental Data Analytic course. Also, I'm now analyzing the experimental data for my MP project using R. However, I've never had a systemetic training.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I've taken GIS course last year so I might be more familiar with spatial analysis.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: I'm worried about whether I can catch up with the coding.
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
-> Answer: 
+> Answer: https://github.com/yw448/Environmental_Data_Analytics_2022.git
 
 
