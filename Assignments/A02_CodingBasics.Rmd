@@ -87,4 +87,4 @@ passing_test2(score)
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: ifelse worked. `if`and `else`doesn't accept vector, so it can only print the first element.
+> Answer: ifelse worked. `if`and `else` doesn't accept vector, so it can only print the first element.
