@@ -93,25 +93,35 @@ Question: In the R chunk below, write "dataframe1$". Press `tab` after you type 
 Find a ten-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. Create two vectors, one representing the high temperature on each of the ten days and one representing the low.
 
 ```{r}
-
+high_temp=c(44,48,34,43,51,51,59,66,59,44)
+low_temp=c(27,27,15,25,25,33,48,47,26,22)
 ```
 
 Now, create two additional vectors that include the ten-day forecast for the high and low temperatures in Celsius. Use a function to create the two new vectors from your existing ones in Fahrenheit.
 
 ```{r}
-
+f_to_c=function(x){
+  celcius= (x-32)*5/9
+  return(celcius)
+}
+high_c=f_to_c(high_temp)
+low_c=f_to_c(low_temp)
 ```
 
 Combine your four vectors into a data frame and add informative column names.
 
 ```{r}
-
+ten_day_forecast=data.frame("high.temp.F"=high_temp,"low.temp.F"=low_temp,"high.temp.c"=high_c,"low.temp.c"=low_c)
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
 
 ```{r}
-
+summary(ten_day_forecast)
+sd(ten_day_forecast$high.temp.F)
+sd(ten_day_forecast$low.temp.F)
+sd(ten_day_forecast$high.temp.c)
+sd(ten_day_forecast$low.temp.c)
 ```
 
 ### Date objects
