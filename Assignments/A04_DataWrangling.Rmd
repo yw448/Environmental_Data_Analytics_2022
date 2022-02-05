@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Yunting Wang"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -25,8 +25,25 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r, message = FALSE}
 #1
-
+library(tidyverse)
+library(lubridate)
+EPA.O3.2018 = read.csv("../Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPA.O3.2019 = read.csv("../Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+EPA.PM.2018 = read.csv("../Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPA.PM.2019 = read.csv("../Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 #2
+dim(EPA.O3.2018)
+dim(EPA.O3.2019)
+dim(EPA.PM.2018)
+dim(EPA.PM.2019)
+colnames(EPA.O3.2018)
+colnames(EPA.O3.2019)
+colnames(EPA.PM.2018)
+colnames(EPA.PM.2019)
+str(EPA.O3.2018)
+str(EPA.O3.2019)
+str(EPA.PM.2018)
+str(EPA.PM.2019)
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -37,13 +54,23 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #3
-
+EPA.O3.2018$Date = as.Date(EPA.O3.2018$Date, format = "%m/%d/%Y")
+EPA.O3.2019$Date = as.Date(EPA.O3.2019$Date, format = "%m/%d/%Y")
+EPA.PM.2018$Date = as.Date(EPA.PM.2018$Date, format = "%m/%d/%Y")
+EPA.PM.2019$Date = as.Date(EPA.PM.2019$Date, format = "%m/%d/%Y")
 #4
-
+EPA.O3.2018.select = select(EPA.O3.2018,Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.O3.2019.select = select(EPA.O3.2019,Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.PM.2018.select = select(EPA.PM.2018,Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.PM.2019.select = select(EPA.PM.2019,Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 #5
-
+EPA.PM.2018.select$AQS_PARAMETER_DESC = "PM2.5"
+EPA.PM.2019.select$AQS_PARAMETER_DESC = "PM2.5"
 #6
-
+write.csv(EPA.O3.2018.select, row.names = FALSE, file = "../Data/Processed/EPAair_O3_NC2018_Processed.csv")
+write.csv(EPA.O3.2019.select, row.names = FALSE, file = "../Data/Processed/EPAair_O3_NC2019_Processed.csv")
+write.csv(EPA.O3.2018.select, row.names = FALSE, file = "../Data/Processed/EPAair_PM25_NC2018_Processed.csv")
+write.csv(EPA.O3.2019.select, row.names = FALSE, file = "../Data/Processed/EPAair_PM25_NC2019_Processed.csv")
 ```
 
 
@@ -62,15 +89,24 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #7
-
+EPAair= rbind(EPA.O3.2018.select,EPA.O3.2019.select,EPA.PM.2018.select,EPA.PM.2019.select)
 #8
+EPAair.ex8 = EPAair %>%
+  filter(Site.Name %in% c( "Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+  group_by(Date,Site.Name,AQS_PARAMETER_DESC,COUNTY) %>%
+  summarise(mean.AQI = mean(DAILY_AQI_VALUE),
+            mean.lat = mean(SITE_LATITUDE),
+            mean.lon = mean(SITE_LONGITUDE)) %>%
+  mutate(Month = month(Date)) %>%
+  mutate(Year = year(Date))
 
+  
 #9
-
+EPAair.ex9 = pivot_wider(EPAair.ex8, names_from = AQS_PARAMETER_DESC, values_from = mean.AQI)
 #10
-
+dim(EPAair.ex9)
 #11
-
+write.csv(EPAair.ex9, row.names = FALSE, file = "../Data/Processed/EPAair_O3_PM25_NC2122_Processed.csv")
 ```
 
 
@@ -84,12 +120,16 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 ```{r}
 #12(a,b)
-
+EPAair.ex12a = EPAair.ex9 %>%
+  group_by(Site.Name,Month,Year) %>%
+  summarise(mean.PM2.5= mean(PM2.5),
+            mean.Ozone = mean(Ozone)) %>%
+  filter(!is.na(mean.PM2.5) & !is.na(mean.Ozone))
 
 #13
-
+dim(EPAair.ex12a)
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 
+> Answer: na.omit function will remove all rows with NA value, whereas drop_na can specify a column to delete NA value. 
