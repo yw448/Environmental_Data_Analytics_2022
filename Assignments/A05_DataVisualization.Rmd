@@ -33,8 +33,14 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 ```{r}
 #1 
-
+getwd()
+library(tidyverse)
+library(cowplot)
+Lake= read.csv("../Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+Litter= read.csv("../Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 #2 
+Lake$sampledate=as.Date(Lake$sampledate,format= "%Y-%m-%d")
+Litter$collectDate=as.Date(Litter$collectDate, format = "%Y-%m-%d")
 
 ```
 ## Define your theme
@@ -42,7 +48,10 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 ```{r}
 #3
-
+mytheme= theme_bw(base_size = 14)+
+  theme(axis.text=element_text(color = "black"),
+        legend.position = "top")
+theme_set(mytheme)
 ```
 
 ## Create graphs
@@ -52,7 +61,11 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #4
-
+ex4<- ggplot(Lake,aes(x=po4,y=tp_ug,color=lakename))+
+  geom_point()+
+  xlim(0,50)+ylim(0,150)+geom_smooth(method=lm,color="black")
+print(ex4)
+  
 ```
 
 
@@ -60,12 +73,26 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #5
-
+ex5.1= ggplot(Lake,aes(x=factor(month),y=temperature_C))+ geom_boxplot(aes(color=lakename))+xlab("Month")
+print(ex5.1)
+ex5.2=ggplot(Lake,aes(x=factor(month),y=tp_ug))+ geom_boxplot(aes(color=lakename))+xlab("Month")
+print(ex5.2)
+ex5.3=ggplot(Lake,aes(x=factor(month),y=tn_ug))+ geom_boxplot(aes(color=lakename))+xlab("Month")
+print(ex5.3)
+threeplot=plot_grid(
+          ex5.1+theme(legend.position="none"),
+          ex5.2+theme(legend.position="none"),
+          ex5.3+theme(legend.position="none"),
+          nrow=3, align = 'vh')
+legend= get_legend(ex5.1)
+ex5.4=plot_grid(
+  threeplot,legend,ncol = 1,rel_heights = c(1, .1))
+print(ex5.4)
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
-> Answer: 
+> Answer: Temperature is higher in summer, and the overall temperature of Paul lake is slighly higher than in Peter lake; Both concentration of TN and TP are higher in summer, and the overall concentration in Peter lake is slightly higher than in Paul Lake.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
@@ -73,11 +100,15 @@ Question: What do you observe about the variables of interest over seasons and b
 
 ```{r}
 #6
-
+ex6= ggplot(subset(Litter,functionalGroup == "Needles"),aes(x=collectDate,y=dryMass,color=nlcdClass))+
+  geom_point()
+print(ex6)
 #7
-
-
+ex7= ggplot(subset(Litter,functionalGroup == "Needles"),aes(x=collectDate,y=dryMass))+
+  geom_point()+
+  facet_wrap(vars(nlcdClass), nrow = 3)
+print(ex7)
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer:Plot 6, It is easier to make comparisons among groups when they're ploted together.
