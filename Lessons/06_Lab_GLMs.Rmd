@@ -67,7 +67,8 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 > Exercise 1: State the hypotheses for testing mean of AQI index.
 
 > Answer: 
-
+Null: mu>=50
+Alternative:mu<50
 
 ```{r}
 
@@ -151,8 +152,11 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 
 ```{r}
 #Exercise 2:
+O3.density= ggplot(EPAair, aes(x=Ozone, fill=as.factor(Year)))+geom_density(alpha=0.5)+scale_fill_manual(values=c("darkgreen","darkblue"))+labs(x="Ozone AQI Value", y="Density",fill="")
+print(O3.density)
 
-
+O3.boxplot= ggplot(EPAair,aes(x=as.factor(Year),y=Ozone))+geom_boxplot()+stat_summary(geom = "text",fun=max ,vjust=-1, size=4, label= c("b","a"))+labs(x="",y="Ozone AQI Value")+ylim(0,150)
+print(O3.boxplot)
 ```
 
 ## Linear Regression
