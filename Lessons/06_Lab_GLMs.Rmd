@@ -212,7 +212,7 @@ step(ex6.AIC)
 
 ex7= lm(data=EPAair.ex6, PM2.5~meanLat + meanLng + Month + Ozone)
 summary(ex7)
-# R-squared:  0.1926 vs R-squared:  0.1316
+# R-squared:  0.192 vs R-squared:  0.1314
 
 ```
 
