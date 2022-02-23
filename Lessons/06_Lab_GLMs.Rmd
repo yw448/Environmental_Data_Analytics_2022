@@ -109,14 +109,14 @@ shapiro.test(EPAair$Ozone[EPAair$Year == 2019])
 
 #Compare variance using F-test (only)
 var.test(EPAair$Ozone ~ EPAair$Year)
-
+# assume both labels have same variance
 #p-value less than 0.05 then reject null for 2018 and 2019 i.e. true ratio not equal to one
 
 ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
   geom_freqpoly()
 
 # Format as a t-test
-O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
+O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year) # var.equal = TRUE force variance to be the same
 O3.twosample
 O3.twosample$p.value
 
@@ -157,6 +157,10 @@ print(O3.density)
 
 O3.boxplot= ggplot(EPAair,aes(x=as.factor(Year),y=Ozone))+geom_boxplot()+stat_summary(geom = "text",fun=max ,vjust=-1, size=4, label= c("b","a"))+labs(x="",y="Ozone AQI Value")+ylim(0,150)
 print(O3.boxplot)
+
+O3.violin= ggplot(EPAair,aes(x=as.factor(Year),y=Ozone))+geom_violin(draw_quantiles = 0.5)+stat_summary(geom = "text",fun=max ,vjust=-1, size=4, label= c("b","a"))+labs(x="",y="Ozone AQI Value")+ylim(0,150)
+print(O3.violin)
+
 ```
 
 ## Linear Regression
@@ -169,11 +173,14 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
-
+ex3= lm(data= EPAair, PM2.5~Ozone)
+summary(ex3)
+#R-squared:  0.1316; p-value: < 2.2e-16
 
 #Exercise 4: Build a scatterplot. Add a line and standard error for the linear regression. 
 
-
+ex4= ggplot(EPAair, aes(x=Ozone,y=PM2.5))+geom_point()+geom_smooth(method = "lm")
+print(ex4)
 
 ```
 
@@ -186,15 +193,26 @@ What other variables can we add to improve model?
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
 
-
-
+library(corrplot)
+EPAair.ex5= EPAair %>%
+  select(meanLat:Ozone) %>%
+  na.omit()
+ex5.corr=cor(EPAair.ex5)
+corrplot(ex5.corr, method = "ellipse")
+corrplot.mixed(ex5.corr, upper = "ellipse")
+#meanLat,meanLng,Month
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
-
-
+EPAair.ex6= na.omit(EPAair)
+ex6.AIC= lm(data = EPAair.ex6, PM2.5~ Ozone+meanLat+meanLng+Month+Year)
+step(ex6.AIC)
 
 
 #Exercise 7: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
+
+ex7= lm(data=EPAair.ex6, PM2.5~meanLat + meanLng + Month + Ozone)
+summary(ex7)
+# R-squared:  0.1926 vs R-squared:  0.1316
 
 ```
 
