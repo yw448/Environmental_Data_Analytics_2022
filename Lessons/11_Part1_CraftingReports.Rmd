@@ -1,10 +1,12 @@
 ---
 title: '11: Crafting Reports'
-author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kateri Salk
+author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kateri
+  Salk
 date: "Spring 2022"
 output:
- pdf_document: default
-
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 ## LESSON OBJECTIVES
@@ -65,6 +67,9 @@ See: <https://rmarkdown.rstudio.com> and class recording.
 
 <Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).> 
 
+* ***Easy for collaboration***
+* ***Easy to adjust***
+* ***Can create various kind of outputs***
 
 ## TEXT EDITING CHALLENGE
 
@@ -76,6 +81,11 @@ Create a table below that details the example datasets we have been using in cla
 ### Installing packages
 
 Create an R chunk below that installs the package `knitr`. Instead of commenting out the code, customize the chunk options such that the code is not evaluated (i.e., not run).
+```{r Installing packages, eval=FALSE, message=FALSE, include=FALSE}
+
+install.packages("knitr")
+
+```
 
 
 ### Setup
@@ -85,6 +95,9 @@ Create an R chunk below called "setup" that checks your working directory, loads
 Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, and set the date column to a date format.
 
 Customize the chunk options such that the code is run but is not displayed in the final document.
+```{r include=FALSE}
+
+```
 
 
 ### Data Exploration, Wrangling, and Visualization
