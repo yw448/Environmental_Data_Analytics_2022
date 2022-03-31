@@ -4,9 +4,9 @@ author: Environmental Data Analytics | John Fay & Luana Lima | Developed by Kate
   Salk
 date: "Spring 2022"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
 ---
 
 ## LESSON OBJECTIVES
@@ -75,6 +75,12 @@ See: <https://rmarkdown.rstudio.com> and class recording.
 
 Create a table below that details the example datasets we have been using in class. The first column should contain the names of the datasets and the second column should include some relevant information about the datasets. (Hint: use the cheat sheets to figure out how to make a table in Rmd)
 
+```{r create table, echo=FALSE}
+Lake=read.csv("../Data/Raw/NTL-LTER_Lake_Nutrients_Raw.csv")
+data=Lake[1:6,]
+knitr::kable(data,caption="Lake nutrients")
+```
+
 
 ## R CHUNK EDITING CHALLENGE
 
@@ -95,8 +101,19 @@ Create an R chunk below called "setup" that checks your working directory, loads
 Load the NTL-LTER_Lake_Nutrients_Raw dataset, display the head of the dataset, and set the date column to a date format.
 
 Customize the chunk options such that the code is run but is not displayed in the final document.
-```{r include=FALSE}
 
+```{r setup, echo=FALSE, message=FALSE}
+getwd()
+library(tidyverse)
+library(lubridate)
+library(knitr)
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
+Lake=read.csv("../Data/Raw/NTL-LTER_Lake_Nutrients_Raw.csv")
+head(Lake)
+Lake$sampledate <- as.Date(Lake$sampledate, format = "%m/%d/%y")
 ```
 
 
@@ -107,17 +124,64 @@ Create an R chunk below to create a processed dataset do the following operation
 -   Include all columns except lakeid, depth_id, and comments
 -   Include only surface samples (depth = 0 m)
 -   Drop rows with missing data
+```{r data processing}
+Lake.processed=Lake %>%
+  select(lakename,year4,
+         daynum,sampledate,
+         depth,tn_ug,tp_ug,
+         nh34,no23,po4)  %>%
+  filter(depth == 0) %>%
+  drop_na()
+```
 
 Create a second R chunk to create a summary dataset with the mean, minimum, maximum, and standard deviation of total nitrogen concentrations for each lake. Create a second summary dataset that is identical except that it evaluates total phosphorus. Customize the chunk options such that the code is run but not displayed in the final document.
 
+```{r echo=FALSE}
+summary1=Lake.processed %>%
+  group_by(lakename) %>%
+  summarize(mean=mean(tn_ug),min=min(tn_ug),
+            max=max(tn_ug),STD=sd(tn_ug))
+summary2=Lake.processed %>%
+  group_by(lakename) %>%
+  summarize(mean=mean(tp_ug),min=min(tp_ug),
+            max=max(tp_ug),STD=sd(tp_ug))
+```
+
+
 Create a third R chunk that uses the function `kable` in the knitr package to display two tables: one for the summary dataframe for total N and one for the summary dataframe of total P. Use the `caption = " "` code within that function to title your tables. Customize the chunk options such that the final table is displayed but not the code used to generate the table.
 
+```{r echo=FALSE}
+kable(summary1,caption = "Nitrogen")
+kable(summary2, caption = "Phosphorus")
+```
+
+
 Create a fourth and fifth R chunk that generates two plots (one in each chunk): one for total N over time with different colors for each lake, and one with the same setup but for total P. Decide which geom option will be appropriate for your purpose, and select a color palette that is visually pleasing and accessible. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, customize the chunk options such that the figures are aligned on the left side of the page. Lastly, add a fig.cap chunk option to add a caption (title) to your plot that will display underneath the figure.
+
+```{r echo=FALSE}
+plotN= ggplot(Lake.processed,
+              aes(x=sampledate,y=tn_ug,color=lakename))+
+  geom_line()+
+  labs("Nitrogen")
+print(plotN)
+plotP= ggplot(Lake.processed,
+              aes(x=sampledate,y=tp_ug,color=lakename))+
+  geom_line()+
+  labs("Phosphorus")
+print(plotP)
+
+```
 
 
 ### Communicating results
 
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
+
+Nutrient concentrations in different lakes have seasonal changes with similar trend.
+
+***
+
+I might take a time series analysis to look at the trend across time to see whether the concentration of different nutrients in different lakes changes over time. 
 
 
 ## KNIT YOUR PDF
