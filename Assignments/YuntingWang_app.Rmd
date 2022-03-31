@@ -1,3 +1,16 @@
+---
+title: "YintingWang_A12"
+author: "Yunting Wang"
+date: "3/30/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
 #### Load packages ----
 library(shiny)
 library(shinythemes)
@@ -102,3 +115,4 @@ shinyApp(ui = ui, server = server)
 #5. Analyze the code used for the renderTable function. 
     # Notice where each bit of code comes from in the UI and server. 
     # Note: renderTable doesn't work well with dates. "sampledate" appears as # of days since 1970.
+
